@@ -1,8 +1,22 @@
-#include "CellAutomat/CellAutomat.h"
+#include "CellAutomat.h"
+#include "graphicalEngine.h"
 
+size_t width = 128;
+size_t height = 128;
+
+void generateMap(){
+   Map * Automat = init(height, width);
+   GenBitmap(Automat);
+   display(Automat);
+   Map * newAutomat = initialiseMap(Automat);
+   display(newAutomat);
+   for(unsigned i = 0; i < 3; i++){
+       Map * map = RunSimulation(newAutomat);
+       display(map);
+   }
+}
 
 int main(){
-   bool Automat[128][128] = {false, false};
-   GenBitmap(Automat);
-   bool newAutomat = RunSimulation(Automat);
+    generateMap();
+    return 0;
 }
