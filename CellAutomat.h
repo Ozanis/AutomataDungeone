@@ -13,10 +13,12 @@ using std::endl;
 std::default_random_engine generator;
 std::uniform_real_distribution<float> distribution(0, 1);
 
+size_t width = 256;
+size_t height = 256;
 
 float stayAliveChance = 0.45;
 int deathLimit = 4;
-int birthLimit = 4;
+int birthLimit = 5;
 
 
 typedef struct{
@@ -30,8 +32,8 @@ void display(Map * map){
     for(unsigned i = 0; i < map->height; i++){
         cout << endl;
         for(unsigned j = 0; j < map->width; j++){
-            if(map->grid[i][j]) cout << "#";
-            else cout << "_";
+            if(map->grid[i][j]) cout << " ";
+            else cout << "#";
         }
     } cout << endl;
 }
@@ -103,6 +105,20 @@ Map * initialiseMap(Map * map){
         }
     }
     return newMap;
+}
+
+
+Map * generateMap(){
+   Map * Automat = init(height, width);
+   GenBitmap(Automat);
+   display(Automat);
+   Automat = initialiseMap(Automat);
+   display(Automat);
+   for(unsigned i = 0; i < 3; i++){
+       Automat = RunSimulation(Automat);
+       display(Automat);
+   }
+    return Automat;
 }
 
 
