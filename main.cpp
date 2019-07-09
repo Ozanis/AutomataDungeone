@@ -2,10 +2,13 @@
 
 
 int main(){
-    generateMap();
+    Map * map = generateMap();
 
 //    const char path = system("pwd");
-    genBmp(generateMap(), "/home/max/Dunge.bmp");
-    createWindow();
+//    genBmp(generateMap(), "/home/max/Dunge.bmp");
+//    genPng(map);
+//    createWindow();
+    GraphicalEngine();
+
     return 0;
 }

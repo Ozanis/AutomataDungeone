@@ -2,85 +2,99 @@
 #define AUTOMATADUNGEONE_GRAPHICALENGINE_H
 
 
+#include <SDL_image.h>
 #include "SDL2/SDL.h"
 #include "CellAutomat.h"
+#include "gd.h"
 
 
-unsigned char fileHeader[14] = {'B','M',0,0,0,0,0,0,0,0,54,0,0,0};
-unsigned char bmpinfoheader[40] = { 0x28,0,0,0, 141, 0,0,0, 70,0,0,0, 1,0, 24,0,0,0,0,0, 0x8c,0x05,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-unsigned char white[3] = {255,255,255};
-unsigned char black[3] = {0,0,0};
-unsigned char pad = 0;
-
-
-
-
-
-unsigned char defSize(Map * map){
-    return (unsigned char)(54 + map->height * map->width);
-}
-
-
-void genBmp(Map * map, const char * name){
-    FILE * bmp = fopen(name, "wb");
-    unsigned filesize = defSize(map);
-    fileHeader[2] = filesize;
-    fileHeader[3] = filesize >> 8;
-    fileHeader[4] = filesize >> 16;
-    fileHeader[5] = filesize >> 24;
-
-    fwrite(&fileHeader, 1, 14, bmp);
-    fwrite(&bmpinfoheader, 1, 40, bmp);
-    for (int i = 0; i < map->height; i++) {
-        for (int j = 0; j < map->width; j++) {
-            if (map->grid[i][j]) {
-                fwrite(&black, 1, 3, bmp);
-//                fwrite(&black, 1, 3, bmp);
-            }
-            else {
-                fwrite(&white, 1, 3, bmp);
-//                fwrite(&white, 1, 3, bmp);
-            }
+void genPng(Map * map){
+    gdImagePtr im;
+    FILE *pngout;
+    int black;
+    int brown;
+    im = gdImageCreate(map->height*10, map->width*10);
+    black = gdImageColorAllocate(im, 0, 0, 0);
+    brown = gdImageColorAllocate(im, 222, 184, 135);
+    unsigned i = 0, j = 0;
+    while(i <= map->height*10){
+        while(j <= map->width*10){
+            unsigned x = i+10, y = j+10;
+            gdImageRectangle(im, i, j, x, y, brown);
+            i = x, j = y;
         }
-        fwrite(&pad, 1, 1, bmp);
     }
-    fclose(bmp);
+    pngout = fopen("/home/max/dungeone.png", "wb");
+    gdImagePng(im, pngout);
+    fclose(pngout);
+    gdImageDestroy(im);
 }
 
 
-SDL_Texture* LoadImage(const char * file, SDL_Renderer * renderer){
-    SDL_Surface *loadedImage = nullptr;
-    SDL_Texture *texture = nullptr;
-    loadedImage = SDL_LoadBMP(file);
-    if (loadedImage != nullptr){
-        texture = SDL_CreateTextureFromSurface(renderer, loadedImage);
-        SDL_FreeSurface(loadedImage);
+SDL_Texture * loadPNG(const char * path, SDL_Renderer * ren) {
+   if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+        std::cerr << "Failed to initialize SDL_img";
+        _exit(0);
     }
-    else
-        std::cout << SDL_GetError() << std::endl;
-    return texture;
+   SDL_Surface * image = nullptr;
+   image = IMG_Load(path);
+   if (!image){
+       std::cerr << "Failed to create surface";
+       _exit(0);
+   }
+   SDL_Texture * tex = SDL_CreateTextureFromSurface(ren, image);
+   if(!tex) {
+       std::cerr << "Failede to crate texture";
+       _exit(0);
+   }
+   SDL_FreeSurface(image);
+   return tex;
 }
 
 
-void createWindow() {
-    SDL_Window *win = SDL_CreateWindow("AutomataDungeone", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
-    if (win == nullptr) std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+SDL_Window * createWin(unsigned x, unsigned y, unsigned w, unsigned h){
+   SDL_Window * win = SDL_CreateWindow("AutomataDungeone", x, y, w, h, SDL_WINDOW_SHOWN);
+    if (win == nullptr){
+        std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        _exit(0);
+    }
+    return win;
+}
 
-    SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (ren == nullptr) std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
 
-    SDL_RenderClear(ren);
-
-    SDL_Texture * tex = LoadImage("/home/max/Dunge.bmp" , ren);
-
-    SDL_RenderCopy(ren, tex, nullptr, nullptr);
-    SDL_RenderPresent(ren);
-
-    SDL_Delay(10000);
-
+void cleaner(SDL_Renderer * ren, SDL_Window * win, SDL_Texture * tex){
     SDL_DestroyTexture(tex);
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);
     SDL_Quit();
 }
+
+
+void draw(SDL_Renderer * ren, SDL_Texture * tex, int x, int y, int h, int w){
+    SDL_Rect rect = {x, y, w, h};
+    if(tex)
+        SDL_RenderCopy(ren, tex, nullptr, &rect);
+    else{
+        SDL_SetRenderDrawColor(ren, 255, 255, 255, 0);
+        SDL_RenderFillRect(ren, &rect);
+    }
+}
+
+
+void GraphicalEngine(){
+    SDL_Window * win = nullptr;
+    SDL_Texture * tex = nullptr;
+    SDL_Renderer * ren = nullptr;
+
+    win = createWin(100, 100, 640, 480);
+    ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    tex = loadPNG("/home/max/dungeone.png", ren);
+    draw(ren, tex, 100, 100, 640, 480);
+
+    SDL_Delay(1000);
+
+    cleaner(ren, win, tex);
+}
+
+
 #endif //AUTOMATADUNGEONE_GRAPHICALENGINE_H
