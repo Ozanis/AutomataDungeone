@@ -87,7 +87,7 @@ int CellAutomat :: countAliveNeighbours(unsigned x, unsigned y){
         for(int j=-1; j<2; j++){
             int neighbour_i = x+i;
             int neighbour_j = y+j;
-            if(i == 0 && j == 0) continue;
+            if(i == 0 && j == 0 && i == this->height - 1 && j == this->width) continue;
             if(neighbour_i < 0 || neighbour_j < 0 || neighbour_i >= this->height || neighbour_i >= this->width) ++count;
             else if(this->grid[neighbour_i][neighbour_j]) ++count;
         }

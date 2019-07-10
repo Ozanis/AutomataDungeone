@@ -2,7 +2,7 @@
 
 static float defaultProbability = 0.45;
 static int DethLim = 3;
-static int BirthLim = 6;
+static int BirthLim = 4;
 static unsigned width = 80;
 static unsigned height = 80;
 static unsigned iterationOrd = 16;

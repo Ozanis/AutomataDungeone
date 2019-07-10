@@ -38,8 +38,8 @@ void Png :: genPng(unsigned scale){
    int brown = gdImageColorAllocate(image, 222, 184, 135);
    for(unsigned i =0; i < this->raw->height; i ++){
         for(unsigned j = 0; j < this->raw->width; j ++){
-                if(this->raw->grid[i][j]) gdImageRectangle(image, i*scale, j*scale, i*scale+scale, j*scale+scale, brown);
-                else gdImageRectangle(image, i, j, i*scale, j*scale, black);
+                if(this->raw->grid[i][j]) gdImageRectangle(image, i*scale, j*scale, i*scale+scale, j*scale+scale, black);
+                else gdImageRectangle(image, i, j, i*scale, j*scale, brown);
         }
     }
     this->pngOut = fopen(this->path, "wb");
