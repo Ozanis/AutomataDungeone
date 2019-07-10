@@ -2,7 +2,7 @@
 #define AUTOMATADUNGEONE_GRAPHICALENGINE_H
 
 
-#include <SDL_image.h>
+#include "SDL_image.h"
 #include "SDL2/SDL.h"
 #include "CellAutomat.h"
 #include "gd.h"
@@ -31,69 +31,85 @@ void genPng(Map * map){
 }
 
 
-SDL_Texture * loadPNG(const char * path, SDL_Renderer * ren) {
-   if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+void Initialize(){
+    if(SDL_Init(SDL_INIT_VIDEO) != 0){
+        std::cerr << "Failed to initialize SDL";
+        _exit(0);
+    }
+
+    if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
         std::cerr << "Failed to initialize SDL_img";
         _exit(0);
     }
-   SDL_Surface * image = nullptr;
-   image = IMG_Load(path);
-   if (!image){
-       std::cerr << "Failed to create surface";
-       _exit(0);
-   }
-   SDL_Texture * tex = SDL_CreateTextureFromSurface(ren, image);
-   if(!tex) {
-       std::cerr << "Failede to crate texture";
-       _exit(0);
-   }
-   SDL_FreeSurface(image);
-   return tex;
 }
 
 
-SDL_Window * createWin(unsigned x, unsigned y, unsigned w, unsigned h){
-   SDL_Window * win = SDL_CreateWindow("AutomataDungeone", x, y, w, h, SDL_WINDOW_SHOWN);
-    if (win == nullptr){
+class Graphics{
+    public:
+    Graphics(const char * imgPath, int x, int y, int w, int h);
+    ~Graphics();
+    void draw();
+
+    SDL_Window * win = nullptr;
+    SDL_Texture * tex = nullptr;
+    SDL_Renderer * ren = nullptr;
+    SDL_Surface * surf = nullptr;
+    SDL_Rect rect = {0,0,0,0};
+    const char * winCapt = "AutomataDungeone";
+};
+
+
+Graphics :: Graphics(const char * imgPath, int x, int y, int w, int h){
+    Initialize();
+
+    this->win = SDL_CreateWindow(this->winCapt, x, y, w, h, SDL_WINDOW_SHOWN);
+    if (!win){
         std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
         _exit(0);
     }
-    return win;
+
+   this->surf = IMG_Load(imgPath);
+    if (!this->surf){
+        std::cerr << "Failed to load image";
+        SDL_FreeSurface(this->surf);
+        _exit(0);
+    }
+
+    this->ren = SDL_CreateRenderer(this->win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if(!this->ren){
+        std::cerr << "No SDL renderer";
+        _exit(0);
+    }
+
+    this->tex = SDL_CreateTextureFromSurface(this->ren, this->surf);
+    if(!this->tex) {
+        std::cerr << "Failede to crate texture";
+        _exit(0);
+    }
+
+    SDL_FreeSurface(this->surf);
+    this->rect = {x, y, w, h};
 }
 
 
-void cleaner(SDL_Renderer * ren, SDL_Window * win, SDL_Texture * tex){
-    SDL_DestroyTexture(tex);
-    SDL_DestroyRenderer(ren);
-    SDL_DestroyWindow(win);
+Graphics :: ~Graphics(){
+    SDL_DestroyTexture(this->tex);
+    SDL_DestroyRenderer(this->ren);
+    SDL_DestroyWindow(this->win);
+    IMG_Quit();
     SDL_Quit();
 }
 
 
-void draw(SDL_Renderer * ren, SDL_Texture * tex, int x, int y, int h, int w){
-    SDL_Rect rect = {x, y, w, h};
-    if(tex)
-        SDL_RenderCopy(ren, tex, nullptr, &rect);
+void Graphics :: draw(){
+    if(this->tex)
+        SDL_RenderCopy(this->ren, this->tex, nullptr, &rect);
     else{
-        SDL_SetRenderDrawColor(ren, 255, 255, 255, 0);
-        SDL_RenderFillRect(ren, &rect);
+        SDL_SetRenderDrawColor(this->ren, 100, 100, 100, 0);
+        SDL_RenderFillRect(this->ren, &rect);
+
     }
-}
-
-
-void GraphicalEngine(){
-    SDL_Window * win = nullptr;
-    SDL_Texture * tex = nullptr;
-    SDL_Renderer * ren = nullptr;
-
-    win = createWin(100, 100, 640, 480);
-    ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    tex = loadPNG("/home/max/dungeone.png", ren);
-    draw(ren, tex, 100, 100, 640, 480);
-
-    SDL_Delay(1000);
-
-    cleaner(ren, win, tex);
+    SDL_RenderPresent(this->ren);
 }
 
 
