@@ -72,7 +72,7 @@ CellAutomat :: CellAutomat(float chance, int death, int birth, unsigned h, unsig
         for(unsigned j = 1; j < this->width; j++ ){
             this->grid[i][j] = distribution(generator) < this->stayAliveChance;
         }
-    };
+    }
 }
 
 
@@ -88,7 +88,7 @@ int CellAutomat :: countAliveNeighbours(unsigned x, unsigned y){
             int neighbour_i = x+i;
             int neighbour_j = y+j;
             if(i == 0 && j == 0) continue;
-            else if(neighbour_i < 0 || neighbour_j < 0 || neighbour_i >= this->height || neighbour_i >= this->width) ++count;
+            if(neighbour_i < 0 || neighbour_j < 0 || neighbour_i >= this->height || neighbour_i >= this->width) ++count;
             else if(this->grid[neighbour_i][neighbour_j]) ++count;
         }
     }

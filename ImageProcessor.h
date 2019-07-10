@@ -12,7 +12,7 @@ using std::cout;
 class Png{
 public:
     Png(Patern * map, char const * path);
-    ~Png();
+    ~Png() = default;
     void genPng(unsigned scale);
 
     char const * path = nullptr;
@@ -25,11 +25,6 @@ Png :: Png(Patern * map, char const * path){
     this->raw = map;
     this->path = path;
     cout << raw->width << endl << raw->height << endl;
-}
-
-
-Png :: ~Png(){
-    if(pngOut != nullptr) fclose(pngOut);
 }
 
 

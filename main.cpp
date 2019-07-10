@@ -3,10 +3,11 @@
 static float defaultProbability = 0.45;
 static int DethLim = 3;
 static int BirthLim = 6;
-static unsigned width = 128;
-static unsigned height = 128;
+static unsigned width = 80;
+static unsigned height = 80;
+static unsigned iterationOrd = 16;
 
-static unsigned scale = 10;
+static unsigned scale = 1;
 static char const * defaultPath ="/home/max/dungeone.png";
 
 static unsigned window_x = 0;
@@ -17,7 +18,7 @@ static unsigned window_height = 480;
 
 int main(){
     CellAutomat Map(defaultProbability, DethLim, BirthLim, width, height);
-    Map.update(3);
+    Map.update(iterationOrd);
     Patern * map = Map.synthesis();
     display(map);
 
