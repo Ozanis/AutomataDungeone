@@ -8,83 +8,86 @@
 
 using std::cout;
 using std::endl;
+using std::default_random_engine;
+using std::uniform_real_distribution;
 
 
-std::default_random_engine generator;
-std::uniform_real_distribution<float> distribution(0, 1);
-
-size_t width = 256;
-size_t height = 256;
-
-float stayAliveChance = 0.45;
-int deathLimit = 3;
-int birthLimit = 6;
-
-
-typedef struct{
-    bool ** grid;
-    unsigned height;
-    unsigned width;
-}Map;
-
-
-void display(Map * map){
-    for(unsigned i = 0; i < map->height; i++){
-        cout << endl;
-        for(unsigned j = 0; j < map->width; j++){
-            if(map->grid[i][j]) cout << " ";
-            else cout << "#";
-        }
-    } cout << endl;
-}
-
-
-Map * init(unsigned height, unsigned width){
-    Map * newMap = new Map[sizeof(Map)];
-    newMap->height = height;
-    newMap->width = width;
-    newMap->grid = new bool*[height];
+bool ** init(unsigned height, unsigned width){
+    bool ** newMap = new bool*[height*sizeof(bool)];
     for(unsigned i = 0; i < height; i++){
-        newMap->grid[i] = new bool[width]{false};
+        newMap[i] = new bool[width]{false};
+        cout << newMap[i] << endl;
     }
     return newMap;
 }
 
 
-void GenBitmap(Map * map) {
-    for(unsigned i = 0; i < map->height; i++ ){
-        for(unsigned j = 0; j < map->width; j++ ){
-            map->grid[i][j] = distribution(generator) < stayAliveChance;
+class CellAutomat{
+public:
+    CellAutomat(float chance, int deathLimit, int birthLimit, unsigned h, unsigned w);
+    ~CellAutomat();
+    int countAliveNeighbours(unsigned x, unsigned y);
+    bool ** runSimulation();
+    void update(unsigned steps);
+
+    float stayAliveChance;
+    int deathLimit;
+    int birthLimit;
+
+    bool ** grid = nullptr;
+    unsigned height;
+    unsigned width;
+};
+
+
+CellAutomat :: CellAutomat(float chance, int death, int birth, unsigned h, unsigned w){
+    this->stayAliveChance = chance;
+    this->deathLimit = death;
+    this->birthLimit = birth;
+    this->height = h;
+    this->width = w;
+    this->grid = init(h, w);
+
+    default_random_engine generator;
+    uniform_real_distribution<float> distribution(0, 1);
+    for(unsigned i = 1; i < this->height; i++ ){
+        for(unsigned j = 1; j < this->width; j++ ){
+            this->grid[i][j] = distribution(generator) < this->stayAliveChance;
         }
-    }
+    }cout << "---" << endl;
 }
 
 
-int countAliveNeighbours(Map * map, unsigned x, unsigned y){
+CellAutomat :: ~CellAutomat(){
+
+}
+
+
+int CellAutomat :: countAliveNeighbours(unsigned x, unsigned y){
     int count = 0;
     for(int i=-1; i<2; i++){
         for(int j=-1; j<2; j++){
             int neighbour_i = x+i;
             int neighbour_j = y+j;
             if(i == 0 && j == 0) continue;
-            else if(neighbour_i < 0 || neighbour_j < 0 || neighbour_i >= map->height || neighbour_i >= map->width) ++count;
-            else if(map->grid[neighbour_i][neighbour_j]) ++count;
+            else if(neighbour_i < 0 || neighbour_j < 0 || neighbour_i >= this->height || neighbour_i >= this->width) ++count;
+            else if(this->grid[neighbour_i][neighbour_j]) ++count;
         }
     }
     return count;
 }
 
 
-Map * RunSimulation(Map * map) {
-    Map * newMap = init(map->height, map->width);
-    for (int i = 0; i < map->height-1; i++) {
-        for (int j = 0; j < map->width-1; j++) {
-            int nbs = countAliveNeighbours(map, i, j);
-            if (map->grid[i][j]) {
-                newMap->grid[i][j] = nbs >= deathLimit;
+bool ** CellAutomat :: runSimulation() {
+    bool ** newMap = init(this->height, this->width);
+    for (int i = 1; i < this->height-1; i++) {
+        for (int j = 1; j < this->width-1; j++) {
+            int nbs = countAliveNeighbours(i, j);
+            if (this->grid[i][j]) {
+                newMap[i][j] = nbs >= deathLimit;
             }
             else {
-                newMap->grid[i][j] = nbs > birthLimit;
+                newMap[i][j] = nbs > birthLimit;
             }
         } cout << endl;
     }
@@ -92,28 +95,21 @@ Map * RunSimulation(Map * map) {
 }
 
 
-Map * initialiseMap(Map * map){
-    Map * newMap = init(map->height, map->height);
-   for(unsigned i = 0; i < map->height; i++){
-        for(int j = 0; j < map->width; j++){
-             newMap->grid[i][j] = (distribution(generator) < stayAliveChance);
-        }
-    }
-    return newMap;
+void CellAutomat :: update(unsigned steps){
+   for(unsigned i = 0; i < steps; i++){
+       this->grid = runSimulation();
+   }
 }
 
 
-Map * generateMap(){
-   Map * Automat = init(height, width);
-   GenBitmap(Automat);
-//   display(Automat);
-   Automat = initialiseMap(Automat);
-//   display(Automat);
-   for(unsigned i = 0; i < 10; i++){
-       Automat = RunSimulation(Automat);
-//       display(Automat);
-   }
-    return Automat;
+void display(bool ** map, unsigned height, unsigned width){
+    for(unsigned i = 0; i < height; i++){
+        cout << endl;
+        for(unsigned j = 0; j < width; j++){
+            if(map[i][j]) cout << " ";
+            else cout << "#";
+        }
+    } cout << endl;
 }
 
 

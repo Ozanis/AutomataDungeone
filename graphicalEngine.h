@@ -8,6 +8,10 @@
 #include "gd.h"
 
 
+using std::cerr;
+using std::cout;
+
+/*
 void genPng(Map * map){
     gdImagePtr im;
     FILE *pngout;
@@ -29,20 +33,7 @@ void genPng(Map * map){
     fclose(pngout);
     gdImageDestroy(im);
 }
-
-
-void Initialize(){
-    if(SDL_Init(SDL_INIT_VIDEO) != 0){
-        std::cerr << "Failed to initialize SDL";
-        _exit(0);
-    }
-
-    if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-        std::cerr << "Failed to initialize SDL_img";
-        _exit(0);
-    }
-}
-
+*/
 
 class Graphics{
     public:
@@ -60,30 +51,38 @@ class Graphics{
 
 
 Graphics :: Graphics(const char * imgPath, int x, int y, int w, int h){
-    Initialize();
+     if(SDL_Init(SDL_INIT_VIDEO) != 0){
+        cerr << "Failed to initialize SDL";
+        _exit(0);
+    }
+
+    if(IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+         cerr << "Failed to initialize SDL_img";
+        _exit(0);
+    }
 
     this->win = SDL_CreateWindow(this->winCapt, x, y, w, h, SDL_WINDOW_SHOWN);
     if (!win){
-        std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
         _exit(0);
     }
 
    this->surf = IMG_Load(imgPath);
     if (!this->surf){
-        std::cerr << "Failed to load image";
+        cerr << "Failed to load image";
         SDL_FreeSurface(this->surf);
         _exit(0);
     }
 
     this->ren = SDL_CreateRenderer(this->win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if(!this->ren){
-        std::cerr << "No SDL renderer";
+        cerr << "No SDL renderer";
         _exit(0);
     }
 
     this->tex = SDL_CreateTextureFromSurface(this->ren, this->surf);
     if(!this->tex) {
-        std::cerr << "Failede to crate texture";
+        cerr << "Failede to crate texture";
         _exit(0);
     }
 
