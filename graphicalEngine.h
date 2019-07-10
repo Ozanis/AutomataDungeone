@@ -4,36 +4,8 @@
 
 #include "SDL_image.h"
 #include "SDL2/SDL.h"
-#include "CellAutomat.h"
-#include "gd.h"
+#include "ImageProcessor.h"
 
-
-using std::cerr;
-using std::cout;
-
-/*
-void genPng(Map * map){
-    gdImagePtr im;
-    FILE *pngout;
-    int black;
-    int brown;
-    im = gdImageCreate(map->height*10, map->width*10);
-    black = gdImageColorAllocate(im, 0, 0, 0);
-    brown = gdImageColorAllocate(im, 222, 184, 135);
-    unsigned i = 0, j = 0;
-    while(i <= map->height*10){
-        while(j <= map->width*10){
-            unsigned x = i+10, y = j+10;
-            gdImageRectangle(im, i, j, x, y, brown);
-            i = x, j = y;
-        }
-    }
-    pngout = fopen("/home/max/dungeone.png", "wb");
-    gdImagePng(im, pngout);
-    fclose(pngout);
-    gdImageDestroy(im);
-}
-*/
 
 class Graphics{
     public:

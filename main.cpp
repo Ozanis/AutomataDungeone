@@ -6,15 +6,25 @@ static int BirthLim = 6;
 static unsigned width = 128;
 static unsigned height = 128;
 
+static unsigned scale = 10;
+static char const * defaultPath ="/home/max/dungeone.png";
+
+static unsigned window_x = 0;
+static unsigned window_y = 0;
+static unsigned window_width = 640;
+static unsigned window_height = 480;
+
 
 int main(){
     CellAutomat Map(defaultProbability, DethLim, BirthLim, width, height);
     Map.update(3);
-    display(Map.grid, height, width);
-//    genPng(map);
+    Patern * map = Map.synthesis();
+    display(map);
 
+    Png pic(map, defaultPath);
+    pic.genPng(scale);
 
-    Graphics Engine("/home/max/dungeone.png", 0, 0, 640, 480);
+    Graphics Engine(defaultPath, window_x, window_y, window_width, window_height);
     SDL_Event event;
     while(event.type!= SDL_QUIT){
         SDL_PollEvent(&event);

@@ -12,13 +12,30 @@ using std::default_random_engine;
 using std::uniform_real_distribution;
 
 
+typedef struct {
+    bool ** grid;
+    size_t width;
+    size_t height;
+}Patern;
+
+
 bool ** init(unsigned height, unsigned width){
     bool ** newMap = new bool*[height*sizeof(bool)];
     for(unsigned i = 0; i < height; i++){
         newMap[i] = new bool[width]{false};
-        cout << newMap[i] << endl;
     }
     return newMap;
+}
+
+
+void display(Patern * map){
+    for(unsigned i = 0; i < map->height; i++){
+        cout << endl;
+        for(unsigned j = 0; j < map->width; j++){
+            if(map->grid[i][j]) cout << " ";
+            else cout << "#";
+        }
+    } cout << endl;
 }
 
 
@@ -26,17 +43,18 @@ class CellAutomat{
 public:
     CellAutomat(float chance, int deathLimit, int birthLimit, unsigned h, unsigned w);
     ~CellAutomat();
-    int countAliveNeighbours(unsigned x, unsigned y);
-    bool ** runSimulation();
-    void update(unsigned steps);
-
-    float stayAliveChance;
-    int deathLimit;
-    int birthLimit;
-
     bool ** grid = nullptr;
     unsigned height;
     unsigned width;
+    void update(unsigned steps);
+    Patern * synthesis();
+
+private:
+    int countAliveNeighbours(unsigned x, unsigned y);
+    bool ** runSimulation();
+    float stayAliveChance;
+    int deathLimit;
+    int birthLimit;
 };
 
 
@@ -54,12 +72,12 @@ CellAutomat :: CellAutomat(float chance, int death, int birth, unsigned h, unsig
         for(unsigned j = 1; j < this->width; j++ ){
             this->grid[i][j] = distribution(generator) < this->stayAliveChance;
         }
-    }cout << "---" << endl;
+    };
 }
 
 
 CellAutomat :: ~CellAutomat(){
-
+    delete(grid);
 }
 
 
@@ -102,15 +120,12 @@ void CellAutomat :: update(unsigned steps){
 }
 
 
-void display(bool ** map, unsigned height, unsigned width){
-    for(unsigned i = 0; i < height; i++){
-        cout << endl;
-        for(unsigned j = 0; j < width; j++){
-            if(map[i][j]) cout << " ";
-            else cout << "#";
-        }
-    } cout << endl;
+Patern * CellAutomat :: synthesis(){
+    auto * map = new Patern[sizeof(Patern)];
+    map->grid = this->grid;
+    map->height = this->height;
+    map->width = this->width;
+    return map;
 }
-
 
 #endif //AUTOMATADUNGEONE_CELLAUTOMAT_H
