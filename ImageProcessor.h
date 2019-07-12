@@ -88,7 +88,7 @@ void Png :: genPng(){
             iscale = i*this->scale;
             jscale = j*this->scale;
             if(this->grid[i][j]) gdImageRectangle(this->image, iscale, jscale, iscale+this->scale, jscale+this->scale, this->Paint[this->grid[i][j]-1]);
-            else gdImageRectangle(this->image, i, j, iscale, jscale,  this->backgroundClr);
+            else gdImageRectangle(this->image, i, j, iscale, jscale,  this->backgroundClr+2);
         }
     }
     this->pngOut = fopen(this->path, "wb");
