@@ -22,8 +22,8 @@ int main(){
     Patern * map = Map.synthesis();
     display(map);
 
-    Png pic(map, defaultPath);
-    pic.genPng(scale);
+    Png pic(map, defaultPath, scale, brownPalette);
+    pic.genPng();
 
     Graphics Engine(defaultPath, window_x, window_y, window_width, window_height);
     SDL_Event event;
