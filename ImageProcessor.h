@@ -9,7 +9,7 @@ using std::cerr;
 using std::cout;
 
 
-int brownPalette[9][3] = {
+static int stounPalette[9][3] = {
         {222, 184, 135},
         {156, 82, 17},
         {144, 72, 10},
@@ -22,7 +22,7 @@ int brownPalette[9][3] = {
 };
 
 
-int greenPalette[9][3] = {
+static int forestPalette[9][3] = {
         {20, 73, 26},
         {10, 51, 0},
         {76, 153, 0},
@@ -34,7 +34,7 @@ int greenPalette[9][3] = {
 };
 
 
-int bluePalette[9][3]{
+static int oceanPalette[9][3]{
         {102, 178, 255},
         {0, 100, 200},
         {51, 153, 255},
@@ -46,7 +46,7 @@ int bluePalette[9][3]{
 };
 
 
-int grayPalette[9][3]{
+static int cavePalette[9][3]{
         {40, 40, 40},
         {35, 35, 35},
         {30, 30, 30},
@@ -85,6 +85,10 @@ Png :: Png(Patern * map, char const * path, unsigned scale, const int (&clr)[9][
     this->height = map->height;
     this->scale = scale;
     this->image = gdImageCreate(this->scale * this->height, this->scale * this->width);
+    if(this->image == nullptr) {
+        cerr << "unable to open image";
+        _exit(0);
+    }
     for(unsigned i = 0; i < 9; i++){
         this->Paint[i] = gdImageColorAllocate(this->image, clr[i][0], clr[i][1], clr[i][2]);
         this->backgroundClr[i] = gdImageColorAllocate(this->image, bckgr[i][0], bckgr[i][1], bckgr[i][2]);
@@ -93,10 +97,6 @@ Png :: Png(Patern * map, char const * path, unsigned scale, const int (&clr)[9][
 
 
 void Png :: genPng(){
-   if(this->image == nullptr) {
-       cerr << "unable to open image";
-       _exit(0);
-   }
    unsigned iscale = 0, jscale = 0;
    for(unsigned i =0; i < this->height; i ++){
         for(unsigned j = 0; j < this->width; j ++){
@@ -106,10 +106,11 @@ void Png :: genPng(){
             else gdImageRectangle(this->image, i, j, iscale, jscale, this->backgroundClr[-(this->grid[i][j]+1)]);
         }
     }
-    this->pngOut = fopen(this->path, "wb");
-    gdImagePng(this->image, this->pngOut);
-    fclose(this->pngOut);
-    gdImageDestroy(this->image);
+   this->pngOut = fopen(this->path, "wb");
+   if(this->pngOut == nullptr) cerr << "Unable to write image";
+   gdImagePng(this->image, this->pngOut);
+   fclose(this->pngOut);
+   gdImageDestroy(this->image);
 }
 
 

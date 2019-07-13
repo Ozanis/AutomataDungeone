@@ -8,7 +8,7 @@
 
 using std::cout;
 using std::endl;
-using std::default_random_engine;
+using std::random_device;
 using std::uniform_real_distribution;
 
 
@@ -31,14 +31,14 @@ class CellAutomat{
 public:
     CellAutomat(float chance, int deathLimit, int birthLimit, unsigned h, unsigned w);
     ~CellAutomat();
+    void update(unsigned steps);
+    Patern * synthesis();
     int ** grid = nullptr;
     unsigned height;
     unsigned width;
-    int countAliveNeighbours(unsigned x, unsigned y);
-    void update(unsigned steps);
-    Patern * synthesis();
 
 private:
+    int countAliveNeighbours(unsigned x, unsigned y);
     int ** runSimulation();
     float stayAliveChance;
     int deathLimit;
@@ -53,8 +53,7 @@ CellAutomat :: CellAutomat(float chance, int death, int birth, unsigned h, unsig
     this->height = h;
     this->width = w;
     this->grid = init(h, w);
-
-    default_random_engine generator;
+    random_device generator;
     uniform_real_distribution<float> distribution(0, 1);
     for(unsigned i = 1; i < this->height; i++ ){
         for(unsigned j = 1; j < this->width; j++ ){
@@ -75,7 +74,6 @@ int CellAutomat :: countAliveNeighbours(unsigned x, unsigned y){
         for(int j=-1; j<2; j++){
             int neighbour_i = x+i;
             int neighbour_j = y+j;
-//            if(i == 0 && j == 0 && i == this->height - 1 && j == this->width) continue;
               if(neighbour_i < 0 || neighbour_j < 0 || neighbour_i >= this->height || neighbour_i >= this->width) ++count;
               else if(this->grid[neighbour_i][neighbour_j]) ++count;
 
@@ -96,9 +94,8 @@ int ** CellAutomat :: runSimulation() {
             }
             else {
                 if(nbs > birthLimit) newMap[i][j] = 1-nbs;
-//                else newMap[i][j] = nbs;
             }
-        } cout << endl;
+        }
     }
     return newMap;
 }

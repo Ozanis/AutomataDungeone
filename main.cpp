@@ -3,9 +3,9 @@
 static float defaultProbability = 0.45;
 static int DethLim = 3;
 static int BirthLim = 4;
-static unsigned width = 90;
-static unsigned height = 90;
-static unsigned iterationOrd = 16;
+static unsigned width = 80;
+static unsigned height = 80;
+static unsigned iterationOrd = 20;
 
 static unsigned scale = 1;
 static char const * defaultPath ="/home/max/dungeone.png";
@@ -21,7 +21,9 @@ int main(){
     Map.update(iterationOrd);
     Patern * map = Map.synthesis();
 
-    Png pic(map, defaultPath, scale, brownPalette, grayPalette);
+    Png pic(map, defaultPath, scale, stounPalette, cavePalette);
+//    Png pic(map, defaultPath, scale, sandPalette, oceanPalette);
+//    Png pic(map, defaultPath, scale, sandPalette, forestPalette);
     pic.genPng();
 
     Graphics Engine(defaultPath, window_x, window_y, window_width, window_height);
