@@ -8,7 +8,7 @@ static unsigned height = 80;
 static unsigned iterationOrd = 20;
 
 static unsigned scale = 1;
-static char const * defaultPath ="/home/max/dungeone.png";
+static char const * defaultPath ="/home/max/Projects/AutomataDungeone/buffer/dungeone.png";
 
 static unsigned window_x = 0;
 static unsigned window_y = 0;
