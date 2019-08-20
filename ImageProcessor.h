@@ -66,6 +66,7 @@ public:
     ~Png()= default;
     void genPng();
 
+
     char const * path = nullptr;
     int ** grid;
     unsigned height = 0;

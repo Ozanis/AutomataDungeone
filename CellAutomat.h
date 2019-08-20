@@ -33,13 +33,13 @@ public:
     ~CellAutomat();
     void update(unsigned steps);
     Patern * synthesis();
-    int ** grid = nullptr;
+    int ** grid;
     unsigned height;
     unsigned width;
+    int ** runSimulation();
 
 private:
     int countAliveNeighbours(unsigned x, unsigned y);
-    int ** runSimulation();
     float stayAliveChance;
     int deathLimit;
     int birthLimit;

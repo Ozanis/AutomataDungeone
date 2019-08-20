@@ -31,6 +31,8 @@ ImageProcessor.h
 /home/max/Projects/AutomataDungeone/main.cpp
 graphicalEngine.h
 /home/max/Projects/AutomataDungeone/graphicalEngine.h
+unistd.h
+/home/max/Projects/AutomataDungeone/unistd.h
 
 /usr/include/SDL2/SDL.h
 SDL_main.h
