@@ -15,12 +15,12 @@ Script provides:
 
 _Cave simulation_
 <img src="./demo/demo1"
-alt="Cave dungeone""
+alt="Cave dungeone"
 style="float: left; margin-right: 10px;" />
 
 _Island simulation_
 <img src="./demo/demo2"
-alt="Continent-like simulation""
+alt="Continent-like simulation"
 style="float: left; margin-right: 10px;" />
 
 
