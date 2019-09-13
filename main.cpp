@@ -22,10 +22,10 @@ int main(){
     Map.runSimulation();
     Map.update(iterationOrd);
     Png pic(Map.synthesis(), defaultPath, scale, stounPalette, cavePalette);
-    pic.genPng();
 
-//    Png pic(map, defaultPath, scale, sandPalette, oceanPalette);
+//    Png pic(Map.synthesis(), defaultPath, scale,  oceanPalette, stounPalette);
 //    Png pic(map, defaultPath, scale, sandPalette, forestPalette);
+    pic.genPng();
 
     Graphics Engine(defaultPath, window_x, window_y, window_width, window_height);
     SDL_Event event;
