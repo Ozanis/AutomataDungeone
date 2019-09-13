@@ -13,8 +13,12 @@ Script provides:
 
 <h2>Examples</h2>
 
+<img src="../demo/demo1.png"
+alt="Cave dungeone""
+style="float: left; margin-right: 10px;" />
 
-![Cave](/home/max/Projects/AutomataDungeone/demo/demo1  "Cave simulation")
+<img src="/home/max/Projects/AutomataDungeone/demo/demo2.png"
+alt="Continent-like simulation""
+style="float: left; margin-right: 10px;" />
 
-![Island](/home/max/Projects/AutomataDungeone/demo/demo2  "Continent-like surface smulation")
 
