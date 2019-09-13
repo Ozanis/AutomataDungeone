@@ -13,11 +13,13 @@ Script provides:
 
 <h2>Examples</h2>
 
-<img src="../demo/demo1.png"
+_Cave simulation_
+<img src="/home/max/Projects/AutomataDungeone/demo/demo1"
 alt="Cave dungeone""
 style="float: left; margin-right: 10px;" />
 
-<img src="/home/max/Projects/AutomataDungeone/demo/demo2.png"
+_Island simulation_
+<img src="/home/max/Projects/AutomataDungeone/demo/demo2"
 alt="Continent-like simulation""
 style="float: left; margin-right: 10px;" />
 
